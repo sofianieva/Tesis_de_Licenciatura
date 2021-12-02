@@ -2,13 +2,8 @@
 Estudio del comportamiento de representaciones de tiempo frecuencia en presencia de ruido heterocedástico dependiente
 
 \
-UNIVERSIDAD DE BUENOS AIRES
-
-Facultad de Ciencias Exactas y Naturales
-
-Departamento de Matemática
+Departamento de Matemática, Facultad de Ciencias Exactas y Naturales, Universidad de Buenos Aires
 
 \
-Alumna: Sofía Nieva
-
+Alumna: Sofía Nieva\
 Directora: Dra. Ana Georgina Flesia
