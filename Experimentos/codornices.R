@@ -1,12 +1,15 @@
-# Leemos os archivos .txt disponibles en https://figshare.com/articles/dataset/High_resolution_locomotor_time_series_in_Japanese_quail_in_a_home_cage_environment_over_a_6_5_day_period_ALL_SERIES_/1424729
-data<-read.csv(file="R/Quail_5_group2.txt", header=FALSE)[, 1]
+library('SynchWave')
+
+# Leemos los archivos .txt disponibles en https://figshare.com/articles/dataset/High_resolution_locomotor_time_series_in_Japanese_quail_in_a_home_cage_environment_over_a_6_5_day_period_ALL_SERIES_/1424729
+# Poner el path correspondiente para leerlo
+data<-read.csv(file="R/Experimentos/Quail_5_group2.txt", header=FALSE)[, 1]
 ft<-data
 
 # para liberar memoria sobreescribimos data
 data<-c(1)  
 t<-seq(1,length(ft-1))
 
-# se tiene 2 muestras por segundo y queremos promediar a 6 
+# se tienen 2 muestras por segundo y queremos promediar a 6 
 # minutos => prmediamos de a 720 datos
 largo<-720
 data_prom<-c()
@@ -17,12 +20,10 @@ for (i in 1:floor(length(ft)/largo)){
 
 time<-seq(1,length(data_prom-1))*0.1
 mov<-data_prom*100
+
+# FIGURA 5.9
 par(mfrow=c(1,1), mai=c(1,1,1,1))
 plot(time ,mov, type = "l", xaxp = c(0, 144, 6),  main = "Serie promediada a 6 minutos", xlab = "Tiempo (h)", ylab = "Movimiento (%)")
-
-
-# llamamos a la libreria SynchWave 
-library('SynchWave')
 
 # se necesita modificar el tiempo ya que se tiene un dato cada 6 miutos
 tnew<-seq(1,length(data_prom-1))*60*6 
@@ -31,6 +32,7 @@ opt <- list(type = "bump")
 
 sstfit <- synsq_cwt_fw(tnew, data_prom, nv, opt)
 
+# Figuras 5.10 y 5.11 (cambiar el archivo que se lee para generar los distintos gráficos)
 par(mfrow=c(1,2), mai=c(1,1,1,1)) 
 
 # Para poder ver los períodos se deben hacer algunas modificaciones, pero la 
@@ -82,18 +84,8 @@ imtfit <- curve_ext_multi(sstfit$Tx, log2(sstfit$fs), 3, lambda, nw)
 # Reconstruction
 curvefit <- curve_ext_recon(sstfit$Tx, sstfit$fs, imtfit$Cs, opt, nw)
 
-par(mfcol=c(1,1), mai=c(0.85,0.85,0.1,0.1))
-image.plot(list(x=t2, y=per, z=mat), 
-           ylim=c(0,30),
-           xlab="Tiempo (h)", ylab="Período (h)", 
-           yaxp = c(0, 30,5),
-           col=designer.colors(64, c("grey100", "lightyellow", "goldenrod1", "tan1", "orange", "tomato", "orangered", "orangered2", "orangered3", "red4", "firebrick4", "grey32")))
-# Lineas extraidas automáticamente
-lines(t2, 1/sstfit$fs[imtfit$Cs[,1]]/3600, lty=2, lwd=2)
-lines(t2, 1/sstfit$fs[imtfit$Cs[,2]]/3600,  lty=2, lwd=2)
-lines(t2, 1/sstfit$fs[imtfit$Cs[,3]]/3600,  lty=2, lwd=2)
 
-# FIGURA 
+# FIGURA 5.12 
 par(mfrow=c(1,2), mai=c(1,0.8,1,0.3)) 
 image.plot(list(x=t2, y=per, z=mat), 
            ylim=c(0,30),
@@ -111,7 +103,7 @@ lines(t2, 1/sstfit$fs[imtfit$Cs[,2]]/3600,  lty=2, lwd=2)
 lines(t2, 1/sstfit$fs[imtfit$Cs[,3]]/3600,  lty=2, lwd=2)
 
 
-# FIGURA
+# FIGURA 5.13
 par(mfcol=c(4,2), mai=c(0.3,0.3,0.1,0.1))
 
 plot(t2, curvefit[,1], type="l", col="red", xaxp = c(0, 144, 6),  xlab = "", ylab = "")
@@ -134,7 +126,3 @@ lines(t2, curvefit[,3]*100-min(curvefit[,3]*100)-2, lty=1, col="red", xaxp = c(0
 
 plot(time ,mov, type = "l", xaxp = c(0, 144, 6), xlab = "Tiempo (h)", ylab = "")
 lines(t2, (curvefit[,1] + curvefit[,2] + curvefit[,3])*100-min((curvefit[,1] + curvefit[,2] + curvefit[,3])*100)-2, lty=1, col="red", xaxt = "n", xaxp = c(0, 144, 6), lwd=2)
-
-
-
-
